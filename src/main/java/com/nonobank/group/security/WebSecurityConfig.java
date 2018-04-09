@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,10 +30,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //    @Autowired
 //    private CheckSessionFilter checkSessionFilter;
 
+//    @Autowired
+//    private AccessDecisionManager accessDecisionManager;
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.csrf().disable().authorizeRequests().antMatchers("/*").permitAll();
+        http
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/getSessionId").hasRole("qa")
+                .antMatchers("/getSessionId").hasRole("admin");
+
+//        http.csrf().disable().authorizeRequests().antMatchers("/*").authenticated();
+//                accessDecisionManager(accessDecisionManager);
 
 //        http
 //                .csrf().disable()

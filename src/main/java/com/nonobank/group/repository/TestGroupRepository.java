@@ -13,4 +13,6 @@ public interface TestGroupRepository extends JpaRepository<TestGroup,Integer> {
 
     List<TestGroup> findByOptstatusNotAndJobTimeIsNotNull(short optstatus);
 
+    TestGroup findByIdAndOptstatusNot(Integer id,short optstatus);
+
 }

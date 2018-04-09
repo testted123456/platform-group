@@ -2,6 +2,8 @@ package com.nonobank.group.util;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.nonobank.group.entity.db.TestGroup;
+import com.nonobank.group.entity.remote.RunGroupData;
 import com.nonobank.group.entity.remote.TestCase;
 
 import java.lang.reflect.Field;
@@ -25,6 +27,8 @@ public class ObjectUtil {
         }
         return object;
     }
+
+
 
     public static void main(String[] args) {
         TestCase reqTestCase = new TestCase();

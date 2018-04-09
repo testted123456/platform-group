@@ -8,6 +8,7 @@ import com.nonobank.group.component.result.Result;
 import com.nonobank.group.component.result.ResultCode;
 import com.nonobank.group.component.result.ResultUtil;
 import com.nonobank.group.entity.db.TestGroup;
+import com.nonobank.group.entity.remote.RunGroupData;
 import com.nonobank.group.repository.TestGroupRepository;
 import com.nonobank.group.util.EntityUtil;
 import org.apache.http.HttpException;
@@ -124,10 +125,10 @@ public class TestGroupController {
 
     @GetMapping(value = "runGroup")
     @ResponseBody
-    public Result run(@RequestParam Integer id) throws IOException {
-        TestGroup testGroup = testGroupRepository.getOne(id);
-        EntityUtil.converCaseStr2CaseList(testGroup);
-        remoteComponent.runGroup(testGroup);
+    public Result run(@RequestParam Integer id) throws IOException, HttpException {
+        TestGroup testGroup = testGroupRepository.findByIdAndOptstatusNot(id,(short)2);
+        RunGroupData runGroupData = EntityUtil.setRunGroupDataValue(testGroup);
+        remoteComponent.runGroup(runGroupData);
         return ResultUtil.success();
     }
 
@@ -159,6 +160,8 @@ public class TestGroupController {
     @GetMapping(value = "getSessionId")
     @ResponseBody
     public String getSession(HttpServletRequest request) {
+        logger.info("aaaa");
+        logger.error("bbbb");
         return request.getSession().getId();
     }
 

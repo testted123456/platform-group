@@ -4,9 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.nonobank.apps.HttpClient;
+import com.nonobank.group.component.exception.GroupException;
+import com.nonobank.group.component.result.ResultCode;
 import com.nonobank.group.entity.db.TestGroup;
+import com.nonobank.group.entity.remote.RunGroupData;
 import com.nonobank.group.entity.remote.TestCase;
 import org.apache.http.HttpException;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,12 +35,17 @@ public class RemoteComponent {
     private String runCasePath;
 
 
-
     private static final String KEY_CASE_ID = "id";
 
     private static final String KEY_CASE_NAME = "name";
 
     private static final String KEY_DATA = "data";
+
+    private static final String KEY_CODE = "code";
+
+    private static final String KEY_MESSAGE = "data";
+
+    private static final String VALUE_SUCCESS_CODE = "10000";
 
     @Autowired
     private HttpClient httpClient;
@@ -44,6 +53,7 @@ public class RemoteComponent {
 
     /**
      * 根据id字符串来查询id
+     *
      * @param ids
      * @return
      * @throws IOException
@@ -70,15 +80,27 @@ public class RemoteComponent {
 
     /**
      * 发送执行请求
-     * @param testGroup
+     *
+     * @param runGroupData
      */
-    public void runGroup(TestGroup testGroup) throws IOException {
+    public void runGroup(RunGroupData runGroupData) throws IOException, HttpException {
         CloseableHttpClient client = httpClient.getHttpClient();
-        String runUrl = caseBaseUrl+caseBaseUrl;
-        httpClient.doPostSendJson(client,null,runUrl, String.valueOf(JSONObject.toJSON(testGroup)));
+        String runUrl = caseBaseUrl + runCasePath;
+        CloseableHttpResponse closeableHttpResponse = httpClient.doPostSendJson(client, null, runUrl, String.valueOf(JSONObject.toJSON(runGroupData)));
+        String repstr = HttpClient.getResBody(closeableHttpResponse);
+        JSONObject jsonObject = JSON.parseObject(repstr);
+        if(jsonObject!=null){
+            String code = String.valueOf(jsonObject.get(KEY_CODE));
+            if (VALUE_SUCCESS_CODE.equals(code)){
+                return ;
+            }
+            String message = String.valueOf(jsonObject.get(KEY_DATA));
+            throw new GroupException(Integer.parseInt(code),message);
+        }
+        throw new GroupException(ResultCode.UNKOWN_ERROR.getCode(),ResultCode.UNKOWN_ERROR.getMsg());
+
+
     }
-
-
 
 
 }
