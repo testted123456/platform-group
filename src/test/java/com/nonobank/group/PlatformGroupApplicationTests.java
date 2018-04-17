@@ -1,8 +1,10 @@
 package com.nonobank.group;
 
+import com.alibaba.fastjson.JSONObject;
 import com.nonobank.apps.HttpClient;
 import com.nonobank.group.entity.db.TestGroup;
 import com.nonobank.group.repository.TestGroupRepository;
+import com.nonobank.group.util.EntityUtil;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,12 +36,16 @@ public class PlatformGroupApplicationTests {
 
 	@Test
 	public void savegroup(){
-		TestGroup testGroup = new TestGroup();
-		testGroup.setpId(0);
-		testGroup.setName("name");
-		testGroup.setOptstatus((short)0);
-		testGroupRepository.save(testGroup);
-		System.out.println("ok");
+//		TestGroup testGroup = new TestGroup();
+//		testGroup.setpId(0);
+//		testGroup.setName("name");
+//		testGroup.setOptstatus((short)0);
+//		testGroupRepository.save(testGroup);
+//		System.out.println("ok");
+
+		TestGroup testGroup = testGroupRepository.findByIdAndOptstatusNot(1,(short)2);
+		EntityUtil.converCaseStr2CaseList(testGroup);
+		System.out.println(((JSONObject)JSONObject.toJSON(testGroup)).toJSONString());
 
 	}
 }

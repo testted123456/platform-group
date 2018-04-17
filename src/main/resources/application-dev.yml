@@ -3,9 +3,14 @@ server:
  context-path: /group
 httpServer:
   case:
-    baseUrl:
-    runPath:
+    baseUrl: http://192.168.32.155:8083
+    runPath: /case/group/execute
     getCasePath:
+
+  user:
+    baseUrl: http://192.168.32.234:8080
+    roleUrlpath: /user/getRoleUrlPathBySystem?system=group
+
 
 
 spring:
@@ -26,6 +31,7 @@ spring:
 #    naming:
 #      physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 
-
-
+ignore:
+  urlPath:
+  ip: 192.168.32.234
 

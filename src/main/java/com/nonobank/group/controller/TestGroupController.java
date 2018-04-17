@@ -10,6 +10,7 @@ import com.nonobank.group.component.result.ResultUtil;
 import com.nonobank.group.entity.db.TestGroup;
 import com.nonobank.group.entity.remote.RunGroupData;
 import com.nonobank.group.repository.TestGroupRepository;
+import com.nonobank.group.security.MyAccessDecisionManager;
 import com.nonobank.group.util.EntityUtil;
 import org.apache.http.HttpException;
 import org.quartz.CronExpression;
@@ -45,6 +46,9 @@ public class TestGroupController {
 
     @Autowired
     private RemoteComponent remoteComponent;
+
+    @Autowired
+    private MyAccessDecisionManager myAccessDecisionManager;
 
     private final static String SUFFIX = " ?";
 
@@ -163,6 +167,14 @@ public class TestGroupController {
         logger.info("aaaa");
         logger.error("bbbb");
         return request.getSession().getId();
+    }
+
+
+    @GetMapping(value = "initRoleUrlMap")
+    @ResponseBody
+    public Result initRoleUrlMap() {
+        myAccessDecisionManager.initUrlMap();
+        return ResultUtil.success();
     }
 
 
