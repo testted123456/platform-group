@@ -96,8 +96,6 @@ public class MyAccessDecisionManager
             return authentication.getPrincipal().toString().equals(ANONYMOUS_USER);
 
         }
-
-
     }
 
 
@@ -132,9 +130,9 @@ public class MyAccessDecisionManager
         }
 
 //        判断是否有相应的角色
-        String needRole = (String) urlMap.get(url);
+        String needRole = urlMap.get(url);
         for (GrantedAuthority ga : authentication.getAuthorities()) {
-            if (ga.getAuthority().equals(ROLE_ADMIN) || needRole.trim().equals(ga.getAuthority().trim())) {
+            if (ga.getAuthority().equals(ROLE_ADMIN) || needRole.trim().equals(ga.getAuthority().trim()) || needRole.trim().contains(ga.getAuthority().trim())) {
                 return;
             }
         }

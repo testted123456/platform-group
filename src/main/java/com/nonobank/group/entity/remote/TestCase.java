@@ -6,6 +6,7 @@ package com.nonobank.group.entity.remote;
 public class TestCase {
     Integer id;
     String name;
+    String type;
     String description;
     boolean checked;
 
@@ -39,5 +40,13 @@ public class TestCase {
 
     public void setChecked(boolean checked) {
         this.checked = checked;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
