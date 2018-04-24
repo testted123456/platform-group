@@ -105,6 +105,10 @@ public class MyAccessDecisionManager
     public void decide(Authentication authentication, Object object,
                        Collection<ConfigAttribute> configAttributes)
             throws AccessDeniedException, InsufficientAuthenticationException {
+    	
+    	if(((FilterInvocation) object).getRequest().getMethod().equals("OPTIONS")){
+        	return;
+        }
 
 //        判断ip是否需要忽略
         String ip = IpAdrressUtil.getIpAdrress(((FilterInvocation) object).getRequest());
@@ -133,10 +137,16 @@ public class MyAccessDecisionManager
 
 //        判断是否有相应的角色
         String needRole = (String) urlMap.get(url);
+        
+        if(null == needRole){
+        	return;
+        }
+        
         for (GrantedAuthority ga : authentication.getAuthorities()) {
             if (ga.getAuthority().equals(ROLE_ADMIN) || needRole.trim().equals(ga.getAuthority().trim())) {
                 return;
             }
+           
         }
         throw new AccessDeniedException("");
 
