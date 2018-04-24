@@ -3,7 +3,7 @@ server:
  context-path: /group
 httpServer:
   case:
-    baseUrl: http://192.168.32.155:8083
+    baseUrl: http://192.168.32.88:8083
     runPath: /case/group/execute
     getCasePath:
 
@@ -33,5 +33,5 @@ spring:
 
 ignore:
   urlPath:
-  ip: 192.168.32.234
+  ip: 192.168.33.65
 

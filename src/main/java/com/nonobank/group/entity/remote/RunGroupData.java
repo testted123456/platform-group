@@ -1,13 +1,15 @@
 package com.nonobank.group.entity.remote;
 
+import java.util.List;
+
 /**
  * Created by tangrubei on 2018/4/4.
  */
 public class RunGroupData {
     private String env;
-    private Integer[] tcIDs = new Integer[0];
     private Integer groupId;
     private Integer totalSize = 0;
+    private List<TestCase> testCases;
 
     public String getEnv() {
         return env;
@@ -17,12 +19,12 @@ public class RunGroupData {
         this.env = env;
     }
 
-    public Integer[] getTcIDs() {
-        return tcIDs;
+    public List<TestCase> getTestCases() {
+        return testCases;
     }
 
-    public void setTcIDs(Integer[] tcIDs) {
-        this.tcIDs = tcIDs;
+    public void setTestCases(List<TestCase> testCases) {
+        this.testCases = testCases;
     }
 
     public Integer getGroupId() {

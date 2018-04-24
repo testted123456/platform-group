@@ -36,13 +36,9 @@ public class EntityUtil {
         RunGroupData runGroupData = new RunGroupData();
         runGroupData.setGroupId(testGroup.getId());
         runGroupData.setEnv(testGroup.getEnv());
-        if(testGroup.getTestCaseList()!=null){
-            runGroupData.setTotalSize(testGroup.getTestCaseList().size());
-            List<Integer> ids = testGroup.getTestCaseList().stream().filter(tc->tc.isChecked()).map(t->t.getId()).collect(Collectors.toList());
-            Integer[] tcids = new Integer[ids.size()];
-            ids.toArray(tcids);
-            runGroupData.setTcIDs(tcids);
-        }
+        List<TestCase> testCases = testGroup.getTestCaseList().stream().filter(tc->tc.isChecked()).collect(Collectors.toList());
+        runGroupData.setTotalSize(testCases.size());
+        runGroupData.setTestCases(testCases);
         return  runGroupData;
 
     }

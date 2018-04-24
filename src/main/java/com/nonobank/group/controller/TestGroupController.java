@@ -53,10 +53,10 @@ public class TestGroupController {
     private final static String SUFFIX = " ?";
 
     public void checkJobTime(String expression) {
-        if(CronExpression.isValidExpression(expression+SUFFIX)) {
+        if (CronExpression.isValidExpression(expression + SUFFIX)) {
             return;
         }
-        throw new GroupException(ResultCode.VALIDATION_ERROR.getCode(),expression + "不符合语法");
+        throw new GroupException(ResultCode.VALIDATION_ERROR.getCode(), expression + "不符合语法");
     }
 
     /**
@@ -73,13 +73,13 @@ public class TestGroupController {
         return ResultUtil.success(testGroups);
     }
 
-    private void getAllGroupsByPid(int pid,List<TestGroup> testGroups){
-        List<TestGroup> tempGroups = testGroupRepository.findByPIdAndOptstatusEquals(pid,(short)0);
-        if(tempGroups!=null&&tempGroups.size()>0){
+    private void getAllGroupsByPid(int pid, List<TestGroup> testGroups) {
+        List<TestGroup> tempGroups = testGroupRepository.findByPIdAndOptstatusEquals(pid, (short) 0);
+        if (tempGroups != null && tempGroups.size() > 0) {
             testGroups.addAll(tempGroups);
         }
-        for(TestGroup testGroup:tempGroups){
-            this.getAllGroupsByPid(testGroup.getId(),testGroups);
+        for (TestGroup testGroup : tempGroups) {
+            this.getAllGroupsByPid(testGroup.getId(), testGroups);
         }
 
     }
@@ -107,7 +107,7 @@ public class TestGroupController {
             logger.error("接口校验失败：{}", erroMsg);
             return ResultUtil.error(ResultCode.VALIDATION_ERROR.getCode(), erroMsg);
         } else {
-            if(testGroup.getTestCaseList()!=null){
+            if (testGroup.getTestCaseList() != null) {
                 JSONArray jsonArray = (JSONArray) JSON.toJSON(testGroup.getTestCaseList());
                 testGroup.setCases(jsonArray.toJSONString());
             }
@@ -118,10 +118,10 @@ public class TestGroupController {
                 testGroup.setCreatedBy(userName);
                 testGroup.setCreatedTime(LocalDateTime.now());
             }
-            if(testGroup.getJobTime()!=null&&testGroup.getJobTime().length()>0){
+            if (testGroup.getJobTime() != null && testGroup.getJobTime().length() > 0) {
                 this.checkJobTime(testGroup.getJobTime());
             }
-            testGroup.setOptstatus((short)0);
+            testGroup.setOptstatus((short) 0);
             testGroupRepository.save(testGroup);
         }
         return ResultUtil.success(testGroup);
@@ -130,15 +130,18 @@ public class TestGroupController {
     @GetMapping(value = "runGroup")
     @ResponseBody
     public Result run(@RequestParam Integer id) throws IOException, HttpException {
-        TestGroup testGroup = testGroupRepository.findByIdAndOptstatusNot(id,(short)2);
+        TestGroup testGroup = testGroupRepository.findByIdAndOptstatusNot(id, (short) 2);
         RunGroupData runGroupData = EntityUtil.setRunGroupDataValue(testGroup);
+        if (runGroupData.getTestCases() == null || runGroupData.getTestCases().size() == 0) {
+            throw new GroupException(ResultCode.EMPTY_ERROR.getCode(), "未找到需要执行的case");
+        }
         remoteComponent.runGroup(runGroupData);
         return ResultUtil.success();
     }
 
     @GetMapping(value = "checkJobTime")
     @ResponseBody
-        public Result deleteGroup(@RequestParam(required = true) String jobTime) {
+    public Result deleteGroup(@RequestParam(required = true) String jobTime) {
         this.checkJobTime(jobTime);
         return ResultUtil.success();
     }
@@ -151,9 +154,9 @@ public class TestGroupController {
             testGroup.setOptstatus((short) 2);
         }
         List<TestGroup> testGroups = new ArrayList<>();
-        this.getAllGroupsByPid(testGroup.getId(),testGroups);
-        testGroups.forEach(tg->{
-            tg.setOptstatus((short)2);
+        this.getAllGroupsByPid(testGroup.getId(), testGroups);
+        testGroups.forEach(tg -> {
+            tg.setOptstatus((short) 2);
         });
         testGroups.add(testGroup);
         testGroupRepository.save(testGroups);
@@ -190,8 +193,8 @@ public class TestGroupController {
         TestGroup reqTestGroup2 = new TestGroup();
         testGroups.add(reqTestGroup1);
         testGroups.add(reqTestGroup2);
-        testGroups.forEach(tg->{
-            tg.setOptstatus((short)2);
+        testGroups.forEach(tg -> {
+            tg.setOptstatus((short) 2);
 
         });
         System.out.println("ok");
