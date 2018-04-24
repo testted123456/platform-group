@@ -28,10 +28,10 @@ public class PlatformGroupApplicationTests {
 
 	@Test
 	public void contextLoads() throws NoSuchAlgorithmException, KeyManagementException {
-		CloseableHttpClient httpclient = httpClient.getHttpsClient();
-		List<TestGroup> testGroupList = testGroupRepository.findByOptstatusNotAndJobTimeIsNotNull((short) 2);
-
-		System.out.println("ok");
+//		CloseableHttpClient httpclient = httpClient.getHttpsClient();
+//		List<TestGroup> testGroupList = testGroupRepository.findByOptstatusNotAndJobTimeIsNotNull((short) 2);
+//
+//		System.out.println("ok");
 	}
 
 	@Test
@@ -43,9 +43,9 @@ public class PlatformGroupApplicationTests {
 //		testGroupRepository.save(testGroup);
 //		System.out.println("ok");
 
-		TestGroup testGroup = testGroupRepository.findByIdAndOptstatusNot(1,(short)2);
-		EntityUtil.converCaseStr2CaseList(testGroup);
-		System.out.println(((JSONObject)JSONObject.toJSON(testGroup)).toJSONString());
+//		TestGroup testGroup = testGroupRepository.findByIdAndOptstatusNot(1,(short)2);
+//		EntityUtil.converCaseStr2CaseList(testGroup);
+//		System.out.println(((JSONObject)JSONObject.toJSON(testGroup)).toJSONString());
 
 	}
 }

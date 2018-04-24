@@ -2,6 +2,8 @@ package com.nonobank.group.security;
 
 import com.alibaba.fastjson.JSONObject;
 import com.nonobank.group.component.RemoteComponent;
+import com.nonobank.group.entity.db.RoleUrlPath;
+import com.nonobank.group.repository.RoleUrlPathRepository;
 import com.nonobank.group.util.IpAdrressUtil;
 import org.apache.http.HttpException;
 import org.hibernate.validator.constraints.URL;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -40,6 +44,8 @@ public class MyAccessDecisionManager
 
     private static final String ROLE_ADMIN = "Admin";
 
+    private static final String SYSTEM = "GROUP";
+
 
     @Value("${ignore.urlPath}")
     String urlPathIgnore;
@@ -49,24 +55,27 @@ public class MyAccessDecisionManager
     String ipIgnore;
 
 
-    @Autowired
-    RemoteComponent remoteComponent;
+
+
+    RoleUrlPathRepository roleUrlPathRepository;
 
 
     public void initUrlMap() {
-        try {
-            urlMap = remoteComponent.getUrlMap();
-            if (urlMap == null || urlMap.keySet().size() == 0) {
-//                    System.out.println("初始化失败");
-////                    throw new AccessDeniedException("权限角色初始化失败");
-            }
-        } catch (IOException | HttpException ex) {
-            ex.printStackTrace();
-//                System.out.println("初始化失败");
-//                throw new AccessDeniedException("权限角色初始化失败");
+
+        List<RoleUrlPath> roleUrlPaths = roleUrlPathRepository.findBySystemEqualsAndOptstatusNot(SYSTEM, (short) 2);
+        if (roleUrlPaths == null || roleUrlPaths.size() == 0) {
+            return ;
         }
+        urlMap = new HashMap<>();
+        roleUrlPaths.forEach(roleUrlPath -> {
+            urlMap.put(roleUrlPath.getUrlPath(), roleUrlPath.getRoleName());
+        });
+
 
     }
+
+
+
 
 
     public boolean checkIgnore(String value, String ignoreConf) {
