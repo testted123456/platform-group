@@ -8,6 +8,7 @@ import com.nonobank.group.entity.remote.RunGroupData;
 import com.nonobank.group.entity.remote.TestCase;
 import org.aspectj.weaver.ast.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +41,27 @@ public class EntityUtil {
         runGroupData.setTotalSize(testCases.size());
         runGroupData.setTestCases(testCases);
         return  runGroupData;
+
+    }
+
+    public static void main(String[] args) {
+        RunGroupData runGroupData = new RunGroupData();
+        runGroupData.setGroupId(1);
+        runGroupData.setEnv("SIT");
+        List<TestCase> cases = new ArrayList<>();
+        for (int i=0;i<3;i++){
+            TestCase testCase = new TestCase();
+            testCase.setId(i);
+            testCase.setChecked(i%2==0);
+            testCase.setCaseType((short)(i%2));
+            cases.add(testCase);
+        }
+        runGroupData.setTestCases(cases);
+        runGroupData.setTotalSize(3);
+        JSONObject jsonObject = (JSONObject) JSON.toJSON(runGroupData);
+        System.out.println(jsonObject.toJSONString());
+
+
 
     }
 }

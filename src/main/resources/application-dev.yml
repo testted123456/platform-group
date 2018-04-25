@@ -1,14 +1,14 @@
 server:
- port: 8082
+ port: 9090
  context-path: /group
 httpServer:
   case:
-    baseUrl: http://192.168.32.88:8083
+    baseUrl: http://192.168.1.49:8090
     runPath: /case/group/execute
     getCasePath:
 
   user:
-    baseUrl: http://192.168.32.234:8080
+    baseUrl: http://192.168.32.44:8090
     roleUrlpath: /user/getRoleUrlPathBySystem?system=group
 
 
