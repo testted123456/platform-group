@@ -57,6 +57,7 @@ public class MyAccessDecisionManager
 
 
 
+    @Autowired
     RoleUrlPathRepository roleUrlPathRepository;
 
 
