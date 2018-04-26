@@ -139,11 +139,12 @@ public class MyAccessDecisionManager
         }
 
 //      获取urlmap
-        if (urlMap == null || urlMap.keySet().size() == 0) {
-            throw new AccessDeniedException("");
+        if (urlMap == null) {
+            return;
+//            throw new AccessDeniedException("");
         }
 
-//        判断是否有相应的角色
+//        获取角色
         String needRole = (String) urlMap.get(url);
         
         if(null == needRole){
