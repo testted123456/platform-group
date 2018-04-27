@@ -1,14 +1,14 @@
 server:
- port: 9090
+ port: 8084
  context-path: /group
 httpServer:
   case:
-    baseUrl: http://192.168.1.49:9090
+    baseUrl: http://192.168.1.138:8083
     runPath: /case/group/execute
     getCasePath:
 
   user:
-    baseUrl: http://192.168.32.44:9090
+    baseUrl: http://192.168.32.138:8088
     roleUrlpath: /user/getRoleUrlPathBySystem?system=group
 
 
@@ -33,5 +33,5 @@ spring:
 
 ignore:
   urlPath:
-  ip: 192.168.1.43,192.168.1.44,192.168.1.47,192.168.1.49
+  ip: 192.168.32.138
 
