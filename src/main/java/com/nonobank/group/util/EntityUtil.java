@@ -53,7 +53,7 @@ public class EntityUtil {
             TestCase testCase = new TestCase();
             testCase.setId(i);
             testCase.setChecked(i%2==0);
-            testCase.setCaseType((short)(i%2));
+//            testCase.setCaseType((short)(i%2));
             cases.add(testCase);
         }
         runGroupData.setTestCases(cases);

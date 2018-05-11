@@ -1,0 +1,37 @@
+server:
+ port: 8084
+ context-path: /group
+httpServer:
+  case:
+    baseUrl: http://127.0.0.1:8083
+    runPath: /case/group/execute
+    getCasePath:
+
+  user:
+    baseUrl: http://127.0.0.1:8088
+    roleUrlpath: /user/getRoleUrlPathBySystem?system=group
+
+spring:
+  redis:
+#    host: 192.168.1.46
+    host: 127.0.0.1
+    port: 6379
+    timeout: 20000
+
+  datasource:
+#    url: jdbc:mysql://192.168.1.51:3306/platform?useUnicode=true&amp;characterEncoding=utf-8
+    url: jdbc:mysql://127.0.0.1:3306/platform?useUnicode=true&amp;characterEncoding=utf-8
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+#    naming:
+#      physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+ignore:
+  urlPath:
+  ip: 127.0.0.1
+
