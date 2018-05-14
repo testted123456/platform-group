@@ -45,30 +45,21 @@ public class EntityUtil {
     }
 
     public static void main(String[] args) {
-
-        String str = "[{\"id\": 5521, \"name\": \"交易系统sit回归测试-贷款申请(信用贷)--正常\", \"checked\": 1, \"caseType\": 0, \"description\": \"单接口测试\"}, {\"id\": 5593, \"name\": \"交易系统sit回归测试-贷款申请(信用贷)--正常_借款70000\", \"checked\": 0, \"caseType\": 0, \"description\": \"单接口测试\"}, {\"id\": 5612, \"name\": \"交易系统sit回归测试-贷款申请(信用贷)--正常-  \\\"newBorrower\\\": \\\"0\\\",用户有借过款\", \"checked\": 0, \"caseType\": 0, \"description\": \"单接口测试\"}, {\"id\": 5611, \"name\": \"交易系统sit回归测试-贷款申请(信用贷)--正常-  \\\"newBorrower\\\": \\\"1\\\",用户没有借过款\", \"checked\": 0, \"caseType\": 0, \"description\": \"单接口测试\"}, {\"id\": 5593, \"name\": \"交易系统sit回归测试-贷款申请(信用贷)--正常_借款70000\", \"checked\": 0, \"caseType\": 0, \"description\": \"单接口测试\"}, {\"id\": 5590, \"name\": \"交易系统sit回归测试-贷款申请(信用贷)--正常-\\\"channelNo\\\": \\\"1\\\"pc借款\", \"checked\": 0, \"caseType\": 0, \"description\": \"单接口测试\"}, {\"id\": 5588, \"name\": \"交易系统sit回归测试-贷款申请(信用贷)--正常-\\\"channelNo\\\": \\\"2\\\",微信借款\", \"checked\": 0, \"caseType\": 0, \"description\": \"单接口测试\"}]";
-        JSONArray jsonarray = JSON.parseArray(str);
-        for (Object obj:jsonarray){
-            JSONObject jobj = (JSONObject) obj;
-            jobj.toJavaObject(TestCase.class);
-
-        }
-
-//        RunGroupData runGroupData = new RunGroupData();
-//        runGroupData.setGroupId(1);
-//        runGroupData.setEnv("SIT");
-//        List<TestCase> cases = new ArrayList<>();
-//        for (int i=0;i<3;i++){
-//            TestCase testCase = new TestCase();
-//            testCase.setId(i);
-//            testCase.setChecked(i%2==0);
+        RunGroupData runGroupData = new RunGroupData();
+        runGroupData.setGroupId(1);
+        runGroupData.setEnv("SIT");
+        List<TestCase> cases = new ArrayList<>();
+        for (int i=0;i<3;i++){
+            TestCase testCase = new TestCase();
+            testCase.setId(i);
+            testCase.setChecked(i%2==0);
 //            testCase.setCaseType((short)(i%2));
-//            cases.add(testCase);
-//        }
-//        runGroupData.setTestCases(cases);
-//        runGroupData.setTotalSize(3);
-//        JSONObject jsonObject = (JSONObject) JSON.toJSON(runGroupData);
-//        System.out.println(jsonObject.toJSONString());
+            cases.add(testCase);
+        }
+        runGroupData.setTestCases(cases);
+        runGroupData.setTotalSize(3);
+        JSONObject jsonObject = (JSONObject) JSON.toJSON(runGroupData);
+        System.out.println(jsonObject.toJSONString());
 
 
 
