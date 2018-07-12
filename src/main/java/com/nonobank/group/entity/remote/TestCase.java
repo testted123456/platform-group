@@ -9,6 +9,7 @@ public class TestCase {
     boolean caseType;
     String description;
     boolean checked;
+    boolean divisionType;
 
     public Integer getId() {
         return id;
@@ -49,4 +50,12 @@ public class TestCase {
     public void setCaseType(boolean caseType) {
         this.caseType = caseType;
     }
+
+	public boolean isDivisionType() {
+		return divisionType;
+	}
+
+	public void setDivisionType(boolean divisionType) {
+		this.divisionType = divisionType;
+	}
 }

@@ -1,5 +1,25 @@
 package com.nonobank.group.controller;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import org.apache.http.HttpException;
+import org.quartz.CronExpression;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.nonobank.group.component.RemoteComponent;
@@ -12,27 +32,11 @@ import com.nonobank.group.entity.remote.RunGroupData;
 import com.nonobank.group.repository.TestGroupRepository;
 import com.nonobank.group.security.MyAccessDecisionManager;
 import com.nonobank.group.util.EntityUtil;
-import org.apache.http.HttpException;
-import org.quartz.CronExpression;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import com.nonobank.group.util.UserUtil;
 
 /**
  * Created by tangrubei on 2018/3/14.
  */
-
 
 @Controller
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -81,7 +85,6 @@ public class TestGroupController {
         for (TestGroup testGroup : tempGroups) {
             this.getAllGroupsByPid(testGroup.getId(), testGroups);
         }
-
     }
 
     /**
@@ -101,7 +104,9 @@ public class TestGroupController {
 
     @PostMapping(value = "save")
     @ResponseBody
-    public Result saveGroup(@CookieValue(value = "nonousername", required = false) String userName, @RequestBody @Valid TestGroup testGroup, BindingResult bindingResult) {
+    public Result saveGroup( @RequestBody @Valid TestGroup testGroup, BindingResult bindingResult) {
+    	 String userName = UserUtil.getUser();
+    	 
         if (bindingResult.hasErrors()) {
             String erroMsg = bindingResult.getAllErrors().get(0).getDefaultMessage();
             logger.error("接口校验失败：{}", erroMsg);

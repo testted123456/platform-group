@@ -1,28 +1,26 @@
 server:
- port: 8084
+ port: 9300
  context-path: /group
 httpServer:
   case:
-    baseUrl: http://192.168.1.138:8083
+    baseUrl: http://192.168.1.121:9200
     runPath: /case/group/execute
     getCasePath:
 
   user:
-    baseUrl: http://192.168.32.138:8088
+    baseUrl: http://192.168.1.122:9090
     roleUrlpath: /user/getRoleUrlPathBySystem?system=group
-
-
 
 spring:
   redis:
-    host: 192.168.1.46
+    host: 192.168.1.123
     port: 6379
     timeout: 20000
 
   datasource:
-    url: jdbc:mysql://192.168.1.51:3306/platform?useUnicode=true&amp;characterEncoding=utf-8
+    url: jdbc:mysql://192.168.1.123:3306/testingplatform?useUnicode=true&amp;characterEncoding=utf-8
     username: root
-    password: 123456
+    password: Imobpay123456!
     driver-class-name: com.mysql.jdbc.Driver
   jpa:
     hibernate:
@@ -33,5 +31,5 @@ spring:
 
 ignore:
   urlPath:
-  ip: 192.168.32.138
+  ip: 192.168.18.126
 
