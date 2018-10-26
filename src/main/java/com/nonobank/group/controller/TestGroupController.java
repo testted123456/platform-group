@@ -30,7 +30,7 @@ import com.nonobank.group.component.result.ResultUtil;
 import com.nonobank.group.entity.db.TestGroup;
 import com.nonobank.group.entity.remote.RunGroupData;
 import com.nonobank.group.repository.TestGroupRepository;
-import com.nonobank.group.security.MyAccessDecisionManager;
+import com.nonobank.group.service.TestGroupService;
 import com.nonobank.group.util.EntityUtil;
 import com.nonobank.group.util.UserUtil;
 
@@ -51,8 +51,11 @@ public class TestGroupController {
     @Autowired
     private RemoteComponent remoteComponent;
 
+//    @Autowired
+//    private MyAccessDecisionManager myAccessDecisionManager;
+    
     @Autowired
-    private MyAccessDecisionManager myAccessDecisionManager;
+    private TestGroupService testGroupService;
 
     private final static String SUFFIX = " ?";
 
@@ -132,7 +135,7 @@ public class TestGroupController {
         return ResultUtil.success(testGroup);
     }
 
-    @GetMapping(value = "runGroup")
+    /*@GetMapping(value = "runGroup")
     @ResponseBody
     public Result run(@RequestParam Integer id) throws IOException, HttpException {
         TestGroup testGroup = testGroupRepository.findByIdAndOptstatusNot(id, (short) 2);
@@ -141,6 +144,18 @@ public class TestGroupController {
             throw new GroupException(ResultCode.EMPTY_ERROR.getCode(), "未找到需要执行的case");
         }
         remoteComponent.runGroup(runGroupData);
+        return ResultUtil.success();
+    }*/
+    
+    @GetMapping(value = "runGroup")
+    @ResponseBody
+    public Result run(@RequestParam Integer id) throws IOException, HttpException {
+        TestGroup testGroup = testGroupRepository.findByIdAndOptstatusNot(id, (short) 2);
+        RunGroupData runGroupData = EntityUtil.setRunGroupDataValue(testGroup);
+        if (runGroupData.getTestCases() == null || runGroupData.getTestCases().size() == 0) {
+            throw new GroupException(ResultCode.EMPTY_ERROR.getCode(), "未找到需要执行的case");
+        }
+        testGroupService.runGroup(runGroupData);
         return ResultUtil.success();
     }
 
@@ -178,56 +193,17 @@ public class TestGroupController {
     }
 
 
-    @GetMapping(value = "initRoleUrlMap")
+    /*@GetMapping(value = "initRoleUrlMap")
     @ResponseBody
     public Result initRoleUrlMap() {
         myAccessDecisionManager.initUrlMap();
         return ResultUtil.success();
-    }
-
+    }*/
 
     @GetMapping(value = "index")
     @ResponseBody
     public String index() {
         return "hello!";
     }
-
-    public static void main(String[] args) {
-        List<TestGroup> testGroups = new ArrayList<>();
-        TestGroup reqTestGroup1 = new TestGroup();
-        TestGroup reqTestGroup2 = new TestGroup();
-        testGroups.add(reqTestGroup1);
-        testGroups.add(reqTestGroup2);
-        testGroups.forEach(tg -> {
-            tg.setOptstatus((short) 2);
-
-        });
-        System.out.println("ok");
-
-
-//        TestGroup reqTestGroup = new TestGroup();
-//        reqTestGroup.setName("mygroup");
-//        reqTestGroup.setDescription("mygroupdesc");
-//        List<TestCase> testCases = new ArrayList<>();
-//        TestCase reqTestCase = new TestCase();
-//        reqTestCase.setId(1);
-//        reqTestCase.setName("myfirstTestcase");
-//        reqTestCase.setChecked(true);
-//
-//        TestCase reqTestCase2 = new TestCase();
-//        reqTestCase2.setId(2);
-//        reqTestCase2.setName("mySecondTestcase");
-//        reqTestCase2.setChecked(true);
-//
-//        testCases.add(reqTestCase);
-//        testCases.add(reqTestCase2);
-//
-//        reqTestGroup.setTestCaseList(testCases);
-//
-//        System.out.println(JSONObject.toJSON(reqTestGroup));
-
-
-    }
-
 
 }

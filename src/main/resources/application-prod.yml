@@ -1,21 +1,19 @@
 server:
  port: 9300
- context-path: /group
+# context-path: /group
 httpServer:
   case:
-    baseUrl: http://192.168.1.122:9200
+    baseUrl: http://127.0.0.1:9200
     runPath: /case/group/execute
     getCasePath:
   user:
-    baseUrl: http://192.168.1.123:9090
+    baseUrl: http://127.0.0.1:9090
     roleUrlpath: /user/getRoleUrlPathBySystem?system=group
-
 spring:
   redis:
     host: 192.168.1.121
     port: 6379
     timeout: 20000
-
   datasource:
     url: jdbc:mysql://192.168.1.121:3306/testingplatform?useUnicode=true&characterEncoding=utf-8
     username: root
@@ -27,8 +25,24 @@ spring:
     show-sql: true
 #    naming:
 #      physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-
+  rabbitmq:
+    host: 192.168.1.121
+    port: 5672  
+    username: rabbitadmin
+    password: 123456
+#eureka:
+# client:
+#  serviceUrl:
+#   defaultZone: http://192.168.1.121:9400/eureka/
+management:
+  security:
+    enabled: false
+feign:
+  httpclient:
+    enabled: true
+ribbon:  
+  ReadTimeout: 60000  
+  ConnectTimeout: 60000 
 ignore:
   urlPath:
-  ip: 192.168.1.120,192.168.1.121,192.168.1.122,192.168.1.123
-
+  ip: 127.0.0.1
