@@ -1,12 +1,16 @@
 package com.nonobank.group.component.timer;
 
-import com.nonobank.group.component.RemoteComponent;
-import com.nonobank.group.entity.db.TestGroup;
-import com.nonobank.group.util.EntityUtil;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.nonobank.group.component.RemoteComponent;
+import com.nonobank.group.entity.db.TestGroup;
+import com.nonobank.group.entity.remote.RunGroupData;
+import com.nonobank.group.service.TestGroupService;
+import com.nonobank.group.util.EntityUtil;
 
 //import com.nonobank.apps.service.TestCaseService;
 
@@ -14,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Created by tangrubei on 2017/2/10.
  */
 public class GroupJobFactory implements Job {
+	
+	public static Logger logger = LoggerFactory.getLogger(GroupJobFactory.class);
 
     public static final String KEY_REMOTE_COMPONENT = "remoteComponent";
 
@@ -21,14 +27,18 @@ public class GroupJobFactory implements Job {
 
     @Autowired
     RemoteComponent remoteComponent;
-
-
+    
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
 //        RemoteComponent remoteComponent = (RemoteComponent) context.getMergedJobDataMap().get(KEY_REMOTE_COMPONENT);
-        TestGroup testGroup = (TestGroup) context.getMergedJobDataMap().get(KEY_TEST_GROUP);
+       
+    	logger.info("开始定执行定时任务...");
+    	TestGroup testGroup = (TestGroup) context.getMergedJobDataMap().get(KEY_TEST_GROUP);
+    	TestGroupService testGroupService = (TestGroupService)context.getMergedJobDataMap().get(KEY_REMOTE_COMPONENT);
         EntityUtil.converCaseStr2CaseList(testGroup);
-
+        RunGroupData runGroupData = EntityUtil.setRunGroupDataValue(testGroup);
+        
+        testGroupService.runGroup(runGroupData);
 //        try {
 //            remoteComponent.runGroup(testGroup);
 //        } catch (IOException e) {

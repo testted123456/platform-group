@@ -2,12 +2,14 @@ package com.nonobank.group.controller;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.http.HttpException;
 import org.quartz.CronExpression;
+import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ import com.nonobank.group.component.exception.GroupException;
 import com.nonobank.group.component.result.Result;
 import com.nonobank.group.component.result.ResultCode;
 import com.nonobank.group.component.result.ResultUtil;
+import com.nonobank.group.component.timer.QuartzManagerComponent;
 import com.nonobank.group.entity.db.TestGroup;
 import com.nonobank.group.entity.remote.RunGroupData;
 import com.nonobank.group.repository.TestGroupRepository;
@@ -50,6 +53,9 @@ public class TestGroupController {
 
     @Autowired
     private RemoteComponent remoteComponent;
+    
+    @Autowired
+    QuartzManagerComponent quartzManagerComponent;
 
 //    @Autowired
 //    private MyAccessDecisionManager myAccessDecisionManager;
@@ -119,18 +125,43 @@ public class TestGroupController {
                 JSONArray jsonArray = (JSONArray) JSON.toJSON(testGroup.getTestCaseList());
                 testGroup.setCases(jsonArray.toJSONString());
             }
-            if (testGroup.getId() != null) {
+            
+            String jobTime = testGroup.getJobTime();
+            String oldJobTime = null;
+            
+            if (testGroup.getId() != null) {//update group
                 testGroup.setUpdatedBy(userName);
-                testGroup.setUpdatedTime(LocalDateTime.now());
-            } else {
+                testGroup.setUpdatedTime(LocalDateTime.now(ZoneId.of("Asia/Shanghai")));
+                TestGroup tg = testGroupRepository.findByIdAndOptstatusNot(testGroup.getId(), (short)0);
+                oldJobTime = tg.getJobTime();
+            } else {//new group
                 testGroup.setCreatedBy(userName);
-                testGroup.setCreatedTime(LocalDateTime.now());
+                testGroup.setCreatedTime(LocalDateTime.now(ZoneId.of("Asia/Shanghai")));
             }
             if (testGroup.getJobTime() != null && testGroup.getJobTime().length() > 0) {
                 this.checkJobTime(testGroup.getJobTime());
             }
+            
             testGroup.setOptstatus((short) 0);
-            testGroupRepository.save(testGroup);
+            testGroup = testGroupRepository.save(testGroup);
+            
+            if(null != oldJobTime && !oldJobTime.equals(jobTime)){//delete old job time
+            	try {
+					quartzManagerComponent.deleteJob(String.valueOf(testGroup.getId()));
+				} catch (SchedulerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }
+            
+            if(null != jobTime && !oldJobTime.equals(jobTime)){//add job time
+            	try {
+					quartzManagerComponent.addGroupJob(testGroup);
+				} catch (SchedulerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }
         }
         return ResultUtil.success(testGroup);
     }
@@ -204,6 +235,10 @@ public class TestGroupController {
     @ResponseBody
     public String index() {
         return "hello!";
+    }
+    
+    public static void main(String [] args){
+    	System.out.print("".equals(null));
     }
 
 }
