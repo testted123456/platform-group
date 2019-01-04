@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.nonobank.group.component.RemoteComponent;
 import com.nonobank.group.component.exception.GroupException;
 import com.nonobank.group.component.result.Result;
 import com.nonobank.group.component.result.ResultCode;
@@ -51,8 +50,8 @@ public class TestGroupController {
     @Autowired
     private TestGroupRepository testGroupRepository;
 
-    @Autowired
-    private RemoteComponent remoteComponent;
+//    @Autowired
+//    private RemoteComponent remoteComponent;
     
     @Autowired
     QuartzManagerComponent quartzManagerComponent;
@@ -121,6 +120,12 @@ public class TestGroupController {
             logger.error("接口校验失败：{}", erroMsg);
             return ResultUtil.error(ResultCode.VALIDATION_ERROR.getCode(), erroMsg);
         } else {
+        	if(false == testGroup.getType()){//文件夹
+        		testGroup.setOptstatus((short)0);
+        		testGroup = testGroupRepository.save(testGroup);
+        		return ResultUtil.success();
+        	}
+        	
             if (testGroup.getTestCaseList() != null) {
                 JSONArray jsonArray = (JSONArray) JSON.toJSON(testGroup.getTestCaseList());
                 testGroup.setCases(jsonArray.toJSONString());
@@ -132,7 +137,7 @@ public class TestGroupController {
             if (testGroup.getId() != null) {//update group
                 testGroup.setUpdatedBy(userName);
                 testGroup.setUpdatedTime(LocalDateTime.now(ZoneId.of("Asia/Shanghai")));
-                TestGroup tg = testGroupRepository.findByIdAndOptstatusNot(testGroup.getId(), (short)0);
+                TestGroup tg = testGroupRepository.findByIdAndOptstatusNot(testGroup.getId(), (short)2);
                 oldJobTime = tg.getJobTime();
             } else {//new group
                 testGroup.setCreatedBy(userName);
@@ -145,7 +150,28 @@ public class TestGroupController {
             testGroup.setOptstatus((short) 0);
             testGroup = testGroupRepository.save(testGroup);
             
-            if(null != oldJobTime && !oldJobTime.equals(jobTime)){//delete old job time
+            if(null != oldJobTime && !"".equals(oldJobTime)){
+            	if(!oldJobTime.equals(jobTime)){//delete old job time, then add job time
+            		try {
+    					quartzManagerComponent.deleteJob(String.valueOf(testGroup.getId()));
+    					quartzManagerComponent.addGroupJob(testGroup);
+    				} catch (SchedulerException e) {
+    					// TODO Auto-generated catch block
+    					e.printStackTrace();
+    				}
+            	}
+            }else{
+            	if(null != jobTime || !"".equals(jobTime)){//add job time
+            		try {
+    					quartzManagerComponent.addGroupJob(testGroup);
+    				} catch (SchedulerException e) {
+    					// TODO Auto-generated catch block
+    					e.printStackTrace();
+    				}
+            	}
+            }
+            
+            /*if(null != oldJobTime && !oldJobTime.equals(jobTime)){//delete old job time
             	try {
 					quartzManagerComponent.deleteJob(String.valueOf(testGroup.getId()));
 				} catch (SchedulerException e) {
@@ -161,7 +187,7 @@ public class TestGroupController {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-            }
+            }*/
         }
         return ResultUtil.success(testGroup);
     }
@@ -213,6 +239,19 @@ public class TestGroupController {
         testGroupRepository.save(testGroups);
         return ResultUtil.success();
     }
+    
+    @GetMapping(value="isCaseInGroup")
+    @ResponseBody
+    public Result isCaseInGroup(@RequestParam(required=true) Integer caseId){
+    	
+    	boolean result = testGroupService.isCaseInGroup(caseId);
+    	
+    	if(result == true){
+    		return ResultUtil.success();
+    	}else{
+    		return ResultUtil.error(ResultCode.EMPTY_ERROR.getCode(), "case id: " +caseId + " 没有被引用！");
+    	}
+    }
 
 
     @GetMapping(value = "getSessionId")
@@ -235,10 +274,6 @@ public class TestGroupController {
     @ResponseBody
     public String index() {
         return "hello!";
-    }
-    
-    public static void main(String [] args){
-    	System.out.print("".equals(null));
     }
 
 }

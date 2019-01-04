@@ -35,7 +35,9 @@ public class GroupJobFactory implements Job {
     	logger.info("开始定执行定时任务...");
     	TestGroup testGroup = (TestGroup) context.getMergedJobDataMap().get(KEY_TEST_GROUP);
     	TestGroupService testGroupService = (TestGroupService)context.getMergedJobDataMap().get(KEY_REMOTE_COMPONENT);
-        EntityUtil.converCaseStr2CaseList(testGroup);
+        Integer groupId = testGroup.getId();
+        testGroup = testGroupService.getById(groupId);
+    	EntityUtil.converCaseStr2CaseList(testGroup);
         RunGroupData runGroupData = EntityUtil.setRunGroupDataValue(testGroup);
         
         testGroupService.runGroup(runGroupData);

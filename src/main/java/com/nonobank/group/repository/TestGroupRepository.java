@@ -2,7 +2,6 @@ package com.nonobank.group.repository;
 
 import com.nonobank.group.entity.db.TestGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 
 /**
@@ -13,6 +12,8 @@ public interface TestGroupRepository extends JpaRepository<TestGroup,Integer> {
 
     List<TestGroup> findByOptstatusNotAndJobTimeIsNotNull(short optstatus);
 
+    List<TestGroup> findByOptstatusNot(short optstatus);
+    
     TestGroup findByIdAndOptstatusNot(Integer id,short optstatus);
 
 }
