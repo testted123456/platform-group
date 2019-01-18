@@ -32,6 +32,7 @@ import com.nonobank.group.component.timer.QuartzManagerComponent;
 import com.nonobank.group.entity.db.TestGroup;
 import com.nonobank.group.entity.remote.RunGroupData;
 import com.nonobank.group.repository.TestGroupRepository;
+import com.nonobank.group.service.MailService;
 import com.nonobank.group.service.TestGroupService;
 import com.nonobank.group.util.EntityUtil;
 import com.nonobank.group.util.UserUtil;
@@ -50,15 +51,12 @@ public class TestGroupController {
     @Autowired
     private TestGroupRepository testGroupRepository;
 
-//    @Autowired
-//    private RemoteComponent remoteComponent;
+    @Autowired
+    private MailService mailService;
     
     @Autowired
     QuartzManagerComponent quartzManagerComponent;
 
-//    @Autowired
-//    private MyAccessDecisionManager myAccessDecisionManager;
-    
     @Autowired
     private TestGroupService testGroupService;
 
@@ -170,40 +168,10 @@ public class TestGroupController {
     				}
             	}
             }
-            
-            /*if(null != oldJobTime && !oldJobTime.equals(jobTime)){//delete old job time
-            	try {
-					quartzManagerComponent.deleteJob(String.valueOf(testGroup.getId()));
-				} catch (SchedulerException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            }
-            
-            if(null != jobTime && !oldJobTime.equals(jobTime)){//add job time
-            	try {
-					quartzManagerComponent.addGroupJob(testGroup);
-				} catch (SchedulerException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            }*/
         }
         return ResultUtil.success(testGroup);
     }
 
-    /*@GetMapping(value = "runGroup")
-    @ResponseBody
-    public Result run(@RequestParam Integer id) throws IOException, HttpException {
-        TestGroup testGroup = testGroupRepository.findByIdAndOptstatusNot(id, (short) 2);
-        RunGroupData runGroupData = EntityUtil.setRunGroupDataValue(testGroup);
-        if (runGroupData.getTestCases() == null || runGroupData.getTestCases().size() == 0) {
-            throw new GroupException(ResultCode.EMPTY_ERROR.getCode(), "未找到需要执行的case");
-        }
-        remoteComponent.runGroup(runGroupData);
-        return ResultUtil.success();
-    }*/
-    
     @GetMapping(value = "runGroup")
     @ResponseBody
     public Result run(@RequestParam Integer id) throws IOException, HttpException {
@@ -253,7 +221,6 @@ public class TestGroupController {
     	}
     }
 
-
     @GetMapping(value = "getSessionId")
     @ResponseBody
     public String getSession(HttpServletRequest request) {
@@ -262,17 +229,10 @@ public class TestGroupController {
         return request.getSession().getId();
     }
 
-
-    /*@GetMapping(value = "initRoleUrlMap")
-    @ResponseBody
-    public Result initRoleUrlMap() {
-        myAccessDecisionManager.initUrlMap();
-        return ResultUtil.success();
-    }*/
-
     @GetMapping(value = "index")
     @ResponseBody
     public String index() {
+    	mailService.generateHtmlReport();
         return "hello!";
     }
 

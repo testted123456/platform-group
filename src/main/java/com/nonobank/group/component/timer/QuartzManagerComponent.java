@@ -24,8 +24,10 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import com.nonobank.group.component.RemoteComponent;
+import com.nonobank.group.component.mail.ReportMail;
 import com.nonobank.group.entity.db.TestGroup;
 import com.nonobank.group.repository.TestGroupRepository;
+import com.nonobank.group.service.MailService;
 import com.nonobank.group.service.TestGroupService;
 
 //import com.nonobank.apps.service.TestCaseService;
@@ -60,6 +62,12 @@ public class QuartzManagerComponent implements ApplicationListener<ContextRefres
     @Autowired
     TestGroupService testGroupService;
 
+    @Autowired
+    MailService mailService;
+    
+    @Autowired
+    ReportMail reportMail;
+  
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
     	ApplicationContext  ac = event.getApplicationContext();
@@ -73,6 +81,7 @@ public class QuartzManagerComponent implements ApplicationListener<ContextRefres
     	try {
             scheduler = schedulerFactory.getScheduler();
             scheduler.start();
+            
             List<TestGroup> testGroupList = testGroupRepository.findByOptstatusNotAndJobTimeIsNotNull((short) 2);
             testGroupList.forEach(testGroup -> {
                 try {
@@ -82,9 +91,19 @@ public class QuartzManagerComponent implements ApplicationListener<ContextRefres
                     e.printStackTrace();
                 }
             });
+            
+            this.addMailJob(reportMail);
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
+    }
+    
+    //邮件定时任务
+    public void addMailJob(ReportMail reportMail) throws SchedulerException{
+    	Map<String,Object> dataMap = new HashMap<>();
+    	dataMap.put(MailJobFactory.KEY_MAIL_COMPONENT, reportMail);
+    	dataMap.put(MailJobFactory.KEY_MAIL_SERVICE, mailService);
+    	this.addJob(reportMail.getName(), reportMail.getJobTime(), MailJobFactory.class, dataMap);
     }
 
     public void addGroupJob(TestGroup testGroup) throws SchedulerException {
