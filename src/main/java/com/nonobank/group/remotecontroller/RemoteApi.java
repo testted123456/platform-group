@@ -13,6 +13,10 @@ public interface RemoteApi {
 	@ResponseBody
 	public Result groupStatisDetail();
 	
+	@GetMapping(value="/statis/statisGroupCaseByAuthor", consumes=MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Result statisGroupCaseByAuthor();
+	
 	@GetMapping(value="/jenkins/getPackageResult", consumes=MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public Result getPackageResult();

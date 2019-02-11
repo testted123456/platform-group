@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.nonobank.group.component.exception.GroupException;
+import com.nonobank.group.component.mail.ReportMail;
 import com.nonobank.group.component.result.Result;
 import com.nonobank.group.component.result.ResultCode;
 import com.nonobank.group.component.result.ResultUtil;
@@ -59,6 +60,9 @@ public class TestGroupController {
 
     @Autowired
     private TestGroupService testGroupService;
+    
+    @Autowired
+    private ReportMail reportMail;
 
     private final static String SUFFIX = " ?";
 
@@ -229,11 +233,12 @@ public class TestGroupController {
         return request.getSession().getId();
     }
 
-    @GetMapping(value = "index")
+    @GetMapping(value = "sendMail")
     @ResponseBody
-    public String index() {
+    public Result sendMail() {
+//    	mailService.sendHtmlMail(reportMail);
     	mailService.generateHtmlReport();
-        return "hello!";
+        return ResultUtil.success();
     }
 
 }

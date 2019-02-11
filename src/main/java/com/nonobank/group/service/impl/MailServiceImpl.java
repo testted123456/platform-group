@@ -102,10 +102,19 @@ public class MailServiceImpl implements MailService {
 	    	Result groupResult = remoteApi.groupStatisDetail();
 	    	JSONArray groupResultJson = null;
 	    	
-	    	
 	    	if(groupResult != null && groupResult.getCode() == 10000){
 	    		Object data = groupResult.getData();
 	    		groupResultJson  = JSON.parseArray(JSON.toJSONString(data));
+	    	}else{
+	    		return null;
+	    	}
+	    	
+	    	Result groupCaseStatis = remoteApi.statisGroupCaseByAuthor();
+	    	JSONArray groupCaseStatisJson = null;
+	    	
+	    	if(groupCaseStatis != null && groupCaseStatis.getCode() == 10000){
+	    		Object data = groupCaseStatis.getData();
+	    		groupCaseStatisJson  = JSON.parseArray(JSON.toJSONString(data));
 	    	}else{
 	    		return null;
 	    	}
@@ -160,6 +169,43 @@ public class MailServiceImpl implements MailService {
 	    			html.append("<td style=\"background-color:red\">" + failSize + "</td>");
 	    		}
 	    		html.append("<td>" + skipSize + "</td>");
+	    		html.append("</tr>");
+	    	}
+	    	
+	    	html.append("</tr>");
+	    	html.append("</table>");
+	    	html.append("</div>");
+	    	
+	    	//按创建人统计
+	    	html.append("<div>");
+	    	html.append("<div style=\"margin-left:10%\">");
+	    	html.append("<p><a href=\"" + "http://192.168.1.121:8080/#/home/report/jenkinsResult" + "\">测试集用例按创建人统计：</a></p>");
+	    	html.append("</div>");
+	    	html.append("<div style=\"margin-left:20%\">");
+	    	html.append("<table style=\"width:40%;text-align:left\">");
+	    	html.append("<tr>");
+	    	html.append("<th>创建人</th>");
+	    	html.append("<th>成功用例数</th>");
+	    	html.append("<th>失败用例数</th>");
+	    	html.append("</tr>");
+	    	
+	    	size = groupCaseStatisJson.size();
+	    	
+	    	for(int i=0;i<size;i++){
+	    		JSONObject jsonObj = groupCaseStatisJson.getJSONObject(i);
+	    		String createdBy = jsonObj.getString("createdBy");
+	    		String successSize = jsonObj.getString("successSize");
+	    		String failSize = jsonObj.getString("failSize");
+	    		html.append("<tr>");
+	    		html.append("<td>" + createdBy + "</td>");
+	    		html.append("<td>" + successSize + "</td>");
+	    		
+	    		if("0".equals(failSize)){
+	    			html.append("<td>" + failSize + "</td>");
+	    		}else{
+	    			html.append("<td style=\"background-color:red\">" + failSize + "</td>");
+	    		}
+	    		
 	    		html.append("</tr>");
 	    	}
 	    	
